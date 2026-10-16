@@ -4,6 +4,8 @@ Tiểu luận cuối kỳ môn học Deep Learning: ứng dụng EfficientNet tr
 
 **Trần Thanh Hùng — Nguyễn Xuân Lâm**
 
+**Mở ứng dụng:** https://nhom9-efficientnet-unet.streamlit.app/
+
 ## Demo trên Streamlit Community Cloud
 
 1. Đăng nhập https://share.streamlit.io bằng GitHub.
