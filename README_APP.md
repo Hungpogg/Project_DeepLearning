@@ -22,7 +22,7 @@ Mở http://localhost:8501. App chỉ lắng nghe trên `127.0.0.1`. Cài thư v
 
 ## Sử dụng
 
-1. Chọn checkpoint có sẵn trong `results_w_EfficientNetB*/best_model.pth`, nhập đường dẫn khác hoặc tải `.pth`/`.pt` lên (tối đa 20 MB/file theo cấu hình mặc định).
+1. Chọn checkpoint có sẵn trong `results_w_EfficientNetB*/best_model.pth`, nhập đường dẫn khác hoặc tải `.pth`/`.pt` lên (tối đa 512 MB/file).
 2. Chọn **Tự nhận diện B0–B7**, hoặc chỉ định đúng encoder đã train. Bấm **Nạp model** để kiểm tra; nút chạy segmentation cũng tự nạp nếu cần.
 3. Chọn định dạng **Cityscapes ghép ảnh + mask** cho ảnh train/val pix2pix: trái là ảnh RGB, phải là mask màu, tỷ lệ toàn ảnh 2:1. Chọn **Ảnh RGB riêng** cho ảnh không ghép, kể cả ảnh phong cảnh tỷ lệ 2:1; app không tự đoán định dạng.
 4. Tải một/nhiều ảnh JPG/PNG hoặc nhập thư mục train/val trên máy chạy app, đọc danh sách và chọn ảnh. Mỗi lần tối đa 100 ảnh, xử lý từng ảnh để hạn chế VRAM.

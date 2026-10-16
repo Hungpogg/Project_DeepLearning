@@ -14,7 +14,7 @@ Tiểu luận cuối kỳ môn học Deep Learning: ứng dụng EfficientNet tr
 4. Trong Advanced settings chọn Python **3.12**, rồi Deploy.
 5. Chia sẻ địa chỉ `.streamlit.app` sau khi app chạy thành công.
 
-Không cần secrets hay API key. Máy chủ dùng PyTorch CPU và checkpoint B3 trong repository, không tải pretrained weights. Model được nạp dùng chung giữa các phiên; suy luận được tuần tự hóa để giảm bộ nhớ đỉnh. Giới hạn 10 ảnh/lượt và 20 MB/file. Cần kiểm tra tài nguyên và thời gian xử lý thực tế trên gói hosting.
+Không cần secrets hay API key. Bản cloud dùng cùng giao diện và luồng xử lý với localhost: chọn checkpoint có sẵn, nhập đường dẫn hoặc tải .pth/.pt; chọn encoder B0–B7; tải ảnh hoặc đọc thư mục. Giới hạn 100 ảnh/lượt và 512 MB/file như bản local. Model được giữ riêng theo phiên người dùng. Máy chủ hiện có checkpoint B3 và chạy CPU; các checkpoint B0–B7 khác có thể tải lên. Bộ nhớ thực tế phụ thuộc gói hosting và kích thước model.
 
 ## Cách sử dụng
 
@@ -25,7 +25,9 @@ Không cần secrets hay API key. Máy chủ dùng PyTorch CPU và checkpoint B3
 
 ## Chạy trên máy cá nhân
 
-Xem [README_APP.md](README_APP.md). `app.py` giữ chức năng chọn checkpoint B0–B7 và thư mục cục bộ; `streamlit_app.py` chỉ dùng model B3 cố định và nhận ảnh tải lên.
+Xem [README_APP.md](README_APP.md). `streamlit_app.py` chạy trực tiếp cùng `app.py`, không ẩn hoặc thay đổi các tùy chọn của bản local.
+
+Trên cloud, ô đường dẫn checkpoint và thư mục đọc từ **máy chủ**, không đọc ổ đĩa máy người xem. Để dùng file trên máy cá nhân, chọn **Tải file .pth** và **Tải một hoặc nhiều ảnh**.
 
 ```powershell
 .\.venv\Scripts\python.exe -m streamlit run streamlit_app.py --server.address 127.0.0.1

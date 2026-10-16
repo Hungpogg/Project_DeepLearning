@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 import hashlib
-import os
 from pathlib import Path
-from threading import Lock
 import time
 
 import numpy as np
@@ -20,8 +18,7 @@ from segmentation_core import (
 
 
 ROOT = Path(__file__).resolve().parent
-PUBLIC_MODE = os.environ.get("SEGMENTATION_PUBLIC_MODE") == "1"
-MAX_IMAGES = 10 if PUBLIC_MODE else 100
+MAX_IMAGES = 100
 st.set_page_config(page_title="Tiểu luận Deep Learning · Nhóm 9", page_icon="🏙️", layout="wide")
 torch.set_num_threads(min(4, torch.get_num_threads()))
 st.markdown("""
@@ -33,19 +30,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-@st.cache_resource(show_spinner=False)
-def public_model():
-    path = ROOT / "results_w_EfficientNetB3" / "best_model.pth"
-    model, metadata = load_model(path, encoder="efficientnet-b3", device="cpu")
-    metadata.update(checkpoint=path.name, checkpoint_sha256=hashlib.sha256(path.read_bytes()).hexdigest())
-    return model, metadata, Lock()
-
-
 def checkpoint_request():
     """Read current explicit checkpoint choice only when an action is submitted."""
-    if PUBLIC_MODE:
-        model, metadata, _ = public_model()
-        return model, dict(metadata)
     if checkpoint_mode == "Tải file .pth":
         if checkpoint_upload is None:
             raise ValueError("Hãy chọn file checkpoint .pth.")
@@ -82,13 +68,11 @@ def show_error(exc):
 
 with st.sidebar:
     st.markdown("### 01 · Model")
-    checkpoint_mode = "Model demo" if PUBLIC_MODE else st.radio(
+    checkpoint_mode = st.radio(
         "Nguồn checkpoint", ["Có sẵn trong dự án", "Đường dẫn .pth", "Tải file .pth"])
     checkpoint_upload = None
     checkpoint_path = ""
-    if PUBLIC_MODE:
-        st.info("UNet + EfficientNet-B3 · best model đã huấn luyện")
-    elif checkpoint_mode == "Có sẵn trong dự án":
+    if checkpoint_mode == "Có sẵn trong dự án":
         paths = sorted(ROOT.glob("results_w_EfficientNetB*/best_model.pth"))
         if paths:
             labels = [str(path.relative_to(ROOT)) for path in paths]
@@ -102,10 +86,10 @@ with st.sidebar:
         checkpoint_path = st.text_input("Đường dẫn checkpoint", placeholder="C:/models/best_model.pth")
     else:
         checkpoint_upload = st.file_uploader("Checkpoint .pth / .pt", type=["pth", "pt"], key="checkpoint_file")
-    encoder = "efficientnet-b3" if PUBLIC_MODE else st.selectbox("Encoder", ["auto", *ENCODERS],
+    encoder = st.selectbox("Encoder", ["auto", *ENCODERS],
                            format_func=lambda x: "Tự nhận diện B0–B7" if x == "auto" else x)
     devices = ["cpu"] + (["cuda"] if torch.cuda.is_available() else [])
-    device = "cpu" if PUBLIC_MODE else st.selectbox("Thiết bị", devices, index=len(devices) - 1,
+    device = st.selectbox("Thiết bị", devices, index=len(devices) - 1,
                           format_func=lambda x: "CPU" if x == "cpu" else "GPU · CUDA")
     if st.button("Nạp model", width="stretch"):
         try:
@@ -123,8 +107,7 @@ with st.sidebar:
     st.markdown("### Quy ước hiển thị")
     st.caption("Input và mask kết quả: 256×256. Class ID: 0–19, cùng bảng màu với notebook.")
     st.caption("Ảnh ghép: trái là ảnh RGB, phải là nhãn màu. Ground truth được giải mã bằng màu gần nhất như lúc train.")
-    st.caption("Ảnh được gửi lên máy chủ để xử lý. Chọn tối đa 10 ảnh mỗi lượt." if PUBLIC_MODE
-               else "Ảnh, checkpoint và kết quả được xử lý trên máy chạy app.")
+    st.caption("Ảnh, checkpoint và kết quả được xử lý trên máy chạy app.")
 
 
 st.title("Tiểu luận cuối kỳ môn học Deep Learning")
@@ -134,7 +117,7 @@ st.write("Model: UNet với EfficientNet encoder")
 st.write("Dataset: Cityscapes Semantic Segmentation")
 
 st.markdown("### 02 · Chọn ảnh")
-source_mode = "Tải một hoặc nhiều ảnh" if PUBLIC_MODE else st.radio(
+source_mode = st.radio(
     "Nguồn ảnh", ["Tải một hoặc nhiều ảnh", "Thư mục trên máy"], horizontal=True)
 input_format = st.radio("Định dạng", ["Cityscapes ghép ảnh + mask", "Ảnh RGB riêng"], horizontal=True)
 paired = input_format == "Cityscapes ghép ảnh + mask"
@@ -184,11 +167,7 @@ if run:
             name = item.name if source_mode == "Tải một hoặc nhiều ảnh" else Path(item).name
             try:
                 data = item.getvalue() if source_mode == "Tải một hoặc nhiều ảnh" else Path(item).read_bytes()
-                if PUBLIC_MODE:
-                    with public_model()[2]:
-                        results.append(predict(model, data, name, paired, device))
-                else:
-                    results.append(predict(model, data, name, paired, device))
+                results.append(predict(model, data, name, paired, device))
             except Exception as exc:
                 errors.append(f"{name}: {exc}")
             progress.progress((index + 1) / count, text=f"Đã xử lý {index + 1}/{count}: {name}")
