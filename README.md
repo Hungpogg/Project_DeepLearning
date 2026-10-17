@@ -1,9 +1,12 @@
 # Tiểu luận cuối kỳ môn học Deep Learning
 
+## TRƯỜNG ĐẠI HỌC CÔNG NGHỆ KỸ THUẬT
+##     THÀNH PHỐ HỒ CHÍ MINH
+
 ## Ứng dụng mạng EfficientNet vào bài toán phân đoạn ảnh giao thông sử dụng kiến trúc Encoder-Decoder
 
 **Nhóm 9 — Trần Thanh Hùng — Nguyễn Xuân Lâm**
-
+**Giáo viên hướng dẫn: PGS.TS Hoàng Văn Dũng**
 Dự án sử dụng kiến trúc U-Net với encoder EfficientNet B0–B7 để phân đoạn ngữ nghĩa ảnh giao thông Cityscapes. Mỗi pixel được gán một nhãn lớp; ứng dụng Streamlit hỗ trợ nạp checkpoint, dự đoán trên một hoặc nhiều ảnh và đối chiếu với ground truth.
 
 ## 1. Notebook và tài nguyên
