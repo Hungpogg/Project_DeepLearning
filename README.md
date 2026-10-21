@@ -53,13 +53,13 @@ Các số liệu dưới đây được đối chiếu từ `training_history.cs
 | `val_iou` tại epoch 50 | 44,06% |
 | Pixel accuracy validation tại epoch 50 | 86,04% |
 
-![Loss, pixel accuracy và mean IoU qua 50 epoch của EfficientNet-B7](Image_web/train_loss_acc_50epoch_modelEffB7.png)
+![Loss, pixel accuracy và mean IoU qua 50 epoch của EfficientNet-B7](Image_data/train_loss_acc_50epoch_modelEffB7.png)
 
 *Loss giảm nhanh ở giai đoạn đầu; về cuối, IoU train tiếp tục tăng trong khi IoU validation dao động quanh 44%. Chênh lệch này cho thấy cần tiếp tục đánh giá khả năng tổng quát hóa.*
 
 ### 3.2. IoU theo từng lớp
 
-![Biểu đồ IoU từng lớp trên tập validation của mô hình B7](Image_web/per_class_iou_modelEffB7.png)
+![Biểu đồ IoU từng lớp trên tập validation của mô hình B7](Image_data/per_class_iou_modelEffB7.png)
 
 Biểu đồ đánh giá từng lớp được cung cấp ghi **Mean IoU = 0,4894 (48,94%)**. Đây là số liệu của biểu đồ đánh giá riêng, còn **44,31%** ở bảng trên là giá trị tốt nhất của cột `val_iou` trong lịch sử huấn luyện. Không dùng hai số này thay thế cho nhau khi chưa đối chiếu cách tổng hợp metric và cấu hình đánh giá.
 
@@ -67,7 +67,7 @@ Theo các giá trị làm tròn trên biểu đồ, mô hình nhận diện tố
 
 ### 3.3. Kết quả dự đoán trực quan
 
-![Các ví dụ ảnh gốc, ground truth và dự đoán của U-Net EfficientNet-B7](Image_web/predictions_modelEffB7.png)
+![Các ví dụ ảnh gốc, ground truth và dự đoán của U-Net EfficientNet-B7](Image_data/predictions_modelEffB7.png)
 
 *Ba cột lần lượt là ảnh gốc, ground truth và prediction. Mô hình thể hiện được cấu trúc đường, công trình, cây xanh và xe; một số chi tiết nhỏ và ranh giới đối tượng còn khác nhãn chuẩn.*
 
@@ -103,7 +103,7 @@ Các ảnh minh họa desktop ở mục 2 và mục 4 được lấy từ thư m
 
 ## 5. Minh họa dữ liệu và tăng cường ảnh
 
-![Mẫu ảnh Cityscapes, mask màu và mask class ID](Image_web/augumentation_data.png)
+![Mẫu ảnh Cityscapes, mask màu và mask class ID](Image_data/augumentation_data.png)
 
 *Ví dụ dữ liệu được cung cấp trong dự án: ảnh đầu vào, mask màu và mask class ID. Một số mẫu thể hiện biến đổi ảnh và vùng che khuất. Cấu hình tăng cường dữ liệu và DataLoader được trình bày trong notebook Kaggle.*
 
