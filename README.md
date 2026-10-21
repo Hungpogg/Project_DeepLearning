@@ -6,31 +6,36 @@
 
 Nhóm 9 — Trần Thanh Hùng — Nguyễn Xuân Lâm | Giáo viên hướng dẫn: PGS.TS Hoàng Văn Dũng
 
-Dự án sử dụng kiến trúc U-Net với encoder EfficientNet B0–B7 để phân đoạn ngữ nghĩa ảnh giao thông Cityscapes. Mỗi pixel được gán một nhãn lớp; ứng dụng Streamlit hỗ trợ nạp checkpoint, dự đoán trên một hoặc nhiều ảnh và đối chiếu với ground truth.
+Dự án sử dụng kiến trúc U-Net với encoder EfficientNet B0–B7 để phân đoạn ngữ nghĩa ảnh giao thông Cityscapes. Mỗi pixel được gán một nhãn lớp; ứng dụng desktop hỗ trợ nạp checkpoint, dự đoán trên một hoặc nhiều ảnh và đối chiếu với ground truth.
 
 ## 1. Notebook và tài nguyên
 
 | Nội dung | Liên kết |
 | --- | --- |
 | Notebook huấn luyện trên Kaggle | [U-Net EfficientNet B0–B7](https://www.kaggle.com/code/hungtrandev99/unet-efficientnetb0-7) |
-| Giao diện đánh giá mô hình | [Mở ứng dụng Streamlit](https://nhom9-efficientnet-unet.streamlit.app/) |
+| Giao diện đánh giá mô hình | Ứng dụng desktop Windows — xem hướng dẫn ở mục 2 |
 | Kết quả huấn luyện EfficientNet B0–B7 | [Thư mục Google Drive](https://drive.google.com/drive/folders/1QJmUWcxEvyuQyWpkai5DJGF4K399JQlL?usp=sharing) |
 
-Notebook là nơi thực hiện huấn luyện. Sau khi train, sử dụng checkpoint `best_model.pth` tương ứng để đánh giá trên giao diện web. Checkpoint cần khớp kiến trúc U-Net, encoder EfficientNet và bộ 20 lớp của dự án.
+Notebook là nơi thực hiện huấn luyện. Sau khi train, sử dụng checkpoint `best_model.pth` tương ứng để đánh giá trên giao diện desktop. Checkpoint cần khớp kiến trúc U-Net, encoder EfficientNet và bộ 20 lớp của dự án.
 
-## 2. Hướng dẫn sử dụng giao diện Streamlit
+## 2. Hướng dẫn sử dụng giao diện desktop
 
-Chuẩn bị file `best_model.pth` và ảnh kiểm thử trên máy, sau đó mở [ứng dụng](https://nhom9-efficientnet-unet.streamlit.app/).
+Ứng dụng desktop được xây dựng bằng **Tkinter**, chạy trực tiếp trên Windows. Chuẩn bị bản đóng gói ứng dụng, checkpoint `best_model.pth` và các ảnh kiểm thử.
 
-1. **B1.** Chọn **Tải file .pth**, tải `best_model.pth` lên.
-2. **B2.** Chọn **Tự nhận diện B0–B7**, rồi nhấn **Nạp model**.
-3. **B3.** Tải ảnh kiểm thử, chọn đúng định dạng và nhấn **Chạy segmentation**.
+**Mở ứng dụng:** chạy `UNetEfficientNetDesktop.exe` trong thư mục bản đóng gói. Giữ thư mục `_internal` bên cạnh file `.exe`; khi chuyển sang máy khác, sao chép toàn bộ thư mục ứng dụng. Bản đóng gói không yêu cầu cài Python; checkpoint được chọn riêng từ máy người dùng.
 
-Chọn **Cityscapes ghép ảnh + mask** nếu file gồm ảnh RGB bên trái và mask nhãn bên phải. Chọn **Ảnh RGB riêng** nếu chỉ có ảnh đầu vào. Có thể tải một hoặc nhiều ảnh PNG/JPG/JPEG, rồi chọn từng ảnh để xem kết quả.
+Thực hiện theo **4 bước** trên giao diện:
 
-![Giao diện nạp checkpoint EfficientNet-B7 và chọn ảnh kiểm thử](Image_web/giaodien_app.jpg)
+1. **Nạp model:** nhấn **Chọn .pth**, chọn `best_model.pth`; giữ encoder **auto** để tự nhận diện EfficientNet B0–B7 hoặc chọn đúng biến thể, rồi nhấn **Nạp model**.
+2. **Nạp ảnh kiểm thử:** nhấn **Chọn ảnh**, chọn một hoặc nhiều ảnh PNG/JPG/JPEG. Ứng dụng luôn sử dụng **ảnh ghép RGB bên trái + mask ground truth bên phải**, theo tỷ lệ **2:1**, tối đa **100 ảnh/lượt**.
+3. **Chạy Segmentation:** nhấn **Chạy segmentation**, chờ thanh tiến trình và thông báo hoàn tất.
+4. **Hiển thị kết quả:** chọn ảnh trong danh sách để xem **Ảnh đầu vào**, **Ground truth**, **Dự đoán** và **Overlay**; xem bảng IoU từng lớp bên dưới. Rê chuột trên ảnh để kiểm tra nhãn pixel, điều chỉnh **Độ phủ overlay** và nhấn **Lưu ZIP kết quả** nếu cần xuất kết quả.
 
-*Giao diện đã nạp EfficientNet-B7, checkpoint epoch 46, với tùy chọn tự nhận diện encoder.*
+![Giao diện desktop với bốn bước nạp model, nạp ảnh, chạy segmentation và hiển thị kết quả](sample_images/GiaoDien_APP.png)
+
+*Giao diện desktop của Nhóm 9, gồm logo trường và bốn bước thao tác.*
+
+Ứng dụng hiện xử lý trên **CPU**, với lưới dự đoán **256 × 256**. Model phải khớp kiến trúc U-Net EfficientNet B0–B7 và bảng 20 lớp của dự án. Khi đổi checkpoint, cần nạp model rồi chạy segmentation lại; kết quả đang hiển thị vẫn thuộc lượt chạy trước đó.
 
 ## 3. Kết quả mô hình EfficientNet-B7
 
@@ -66,19 +71,19 @@ Theo các giá trị làm tròn trên biểu đồ, mô hình nhận diện tố
 
 *Ba cột lần lượt là ảnh gốc, ground truth và prediction. Mô hình thể hiện được cấu trúc đường, công trình, cây xanh và xe; một số chi tiết nhỏ và ranh giới đối tượng còn khác nhãn chuẩn.*
 
-## 4. Minh họa đánh giá bằng giao diện web
+## 4. Minh họa đánh giá bằng giao diện desktop
 
 ### 4.1. So sánh ảnh đầu vào, ground truth và dự đoán
 
-![Kết quả segmentation và lớp phủ trên giao diện Streamlit](Image_web/anh_ket_qua_segmentation.jpg)
+![Ảnh đầu vào, ground truth, dự đoán và overlay trên giao diện desktop](sample_images/Result_AnhInput_GT_DuDoan.png)
 
-Chọn ảnh trong danh sách kết quả để so sánh ảnh đầu vào, ground truth và mask dự đoán. Tab **Khám phá pixel** cho phép xem lớp phủ, điều chỉnh độ phủ mask và kiểm tra nhãn tại tọa độ pixel. Ảnh minh họa sử dụng encoder B7.
+Chọn ảnh trong danh sách kết quả để so sánh ảnh đầu vào, ground truth và mask dự đoán. Bốn vùng ảnh hiển thị đồng thời ảnh RGB, ground truth, dự đoán và overlay. Có thể điều chỉnh độ phủ overlay và rê chuột trên ảnh để kiểm tra nhãn từng pixel. Ảnh minh họa sử dụng encoder B7.
 
 ### 4.2. Phân bố lớp và IoU của ảnh đang xem
 
-![Bảng phân bố lớp, số pixel dự đoán, ground truth và IoU](Image_web/anh_ketqua_phan_lop_IOU.jpg)
+![Bảng phân bố pixel và IoU từng lớp trên giao diện desktop](sample_images/Result_IoU_tung_lop.png)
 
-Tab **Phân bố lớp** hiển thị số pixel dự đoán, diện tích (%), số pixel ground truth và **IoU (%)** của từng lớp:
+Bảng thống kê bên dưới các ảnh hiển thị số pixel dự đoán, diện tích (%), số pixel ground truth và **IoU (%)** của từng lớp:
 
 ```text
 IoU (%) = TP / (TP + FP + FN) × 100
@@ -88,13 +93,13 @@ IoU (%) = TP / (TP + FP + FN) × 100
 - **FP:** pixel bị dự đoán vào lớp đó nhưng ground truth thuộc lớp khác.
 - **FN:** pixel ground truth thuộc lớp đó nhưng bị dự đoán sang lớp khác.
 
-IoU trên giao diện được tính cho **ảnh đang xem** ở lưới 256 × 256. Ảnh RGB không có ground truth không tính được IoU; lớp vắng trong cả dự đoán và ground truth được để trống. Diện tích (%) biểu thị tỷ lệ pixel dự đoán của lớp trong ảnh. IoU từng ảnh không đại diện cho mIoU của toàn bộ tập validation.
+IoU trên giao diện được tính cho **ảnh đang xem** ở lưới 256 × 256. Ứng dụng lấy ground truth từ nửa mask của ảnh ghép; lớp vắng trong cả dự đoán và ground truth được hiển thị bằng dấu gạch ngang. Diện tích (%) biểu thị tỷ lệ pixel dự đoán của lớp trong ảnh. IoU từng ảnh không đại diện cho mIoU của toàn bộ tập validation.
 
-### 4.3. Minh họa vùng sai khác với ground truth
+### 4.3. Lưu kết quả đánh giá
 
-![Vùng dự đoán sai khác với ground truth được tô đỏ](Image_web/anh_khac_nhan_GroundTrue.jpg)
+Nhấn **Lưu ZIP kết quả** để xuất toàn bộ lượt chạy, gồm ảnh đầu vào, mask dự đoán, overlay, ground truth, ảnh đánh dấu vùng sai khác và bảng `class_pixels.csv` có IoU từng lớp. Các tệp này hỗ trợ lưu minh chứng và so sánh kết quả giữa các checkpoint.
 
-*Ảnh minh họa làm nổi bật vùng sai khác, giúp quan sát các lỗi tại ranh giới và chi tiết nhỏ.*
+Các ảnh minh họa desktop ở mục 2 và mục 4 được lấy từ thư mục `UNet_EfficientNet_Desktop/sample_images/` của dự án và lưu tại [sample_images](sample_images/) trong repo này.
 
 ## 5. Minh họa dữ liệu và tăng cường ảnh
 
@@ -104,6 +109,6 @@ IoU trên giao diện được tính cho **ảnh đang xem** ở lưới 256 × 
 
 ## 6. Kết quả huấn luyện B0–B7
 
-Toàn bộ tài nguyên kết quả huấn luyện được chia sẻ tại [Google Drive — EfficientNet B0–B7](https://drive.google.com/drive/folders/1QJmUWcxEvyuQyWpkai5DJGF4K399JQlL?usp=sharing). Chọn checkpoint của biến thể cần kiểm thử, tải về máy rồi thực hiện ba bước nạp model và chạy segmentation ở phần 2.
+Toàn bộ tài nguyên kết quả huấn luyện được chia sẻ tại [Google Drive — EfficientNet B0–B7](https://drive.google.com/drive/folders/1QJmUWcxEvyuQyWpkai5DJGF4K399JQlL?usp=sharing). Chọn checkpoint của biến thể cần kiểm thử, tải về máy rồi thực hiện bốn bước sử dụng giao diện desktop ở phần 2.
 
-Nhánh mặc định của repo dùng để giới thiệu dự án và lưu ảnh minh họa. Nhánh `main` được giữ nguyên để phục vụ website Streamlit hiện có.
+Nhánh mặc định của repo dùng để giới thiệu dự án, hướng dẫn sử dụng ứng dụng desktop và lưu ảnh minh họa.
